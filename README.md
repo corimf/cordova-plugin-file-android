@@ -21,9 +21,7 @@ description: Read/write files on the device.
 #         under the License.
 -->
 
-|Android|iOS| Windows 8.1 Store | Windows 8.1 Phone | Windows 10 Store | Travis CI |
-|:-:|:-:|:-:|:-:|:-:|:-:|
-|[![Build Status](http://cordova-ci.cloudapp.net:8080/buildStatus/icon?job=cordova-periodic-build/PLATFORM=android,PLUGIN=cordova-plugin-file)](http://cordova-ci.cloudapp.net:8080/job/cordova-periodic-build/PLATFORM=android,PLUGIN=cordova-plugin-file/)|[![Build Status](http://cordova-ci.cloudapp.net:8080/buildStatus/icon?job=cordova-periodic-build/PLATFORM=ios,PLUGIN=cordova-plugin-file)](http://cordova-ci.cloudapp.net:8080/job/cordova-periodic-build/PLATFORM=ios,PLUGIN=cordova-plugin-file/)|[![Build Status](http://cordova-ci.cloudapp.net:8080/buildStatus/icon?job=cordova-periodic-build/PLATFORM=windows-8.1-store,PLUGIN=cordova-plugin-file)](http://cordova-ci.cloudapp.net:8080/job/cordova-periodic-build/PLATFORM=windows-8.1-store,PLUGIN=cordova-plugin-file/)|[![Build Status](http://cordova-ci.cloudapp.net:8080/buildStatus/icon?job=cordova-periodic-build/PLATFORM=windows-8.1-phone,PLUGIN=cordova-plugin-file)](http://cordova-ci.cloudapp.net:8080/job/cordova-periodic-build/PLATFORM=windows-8.1-phone,PLUGIN=cordova-plugin-file/)|[![Build Status](http://cordova-ci.cloudapp.net:8080/buildStatus/icon?job=cordova-periodic-build/PLATFORM=windows-10-store,PLUGIN=cordova-plugin-file)](http://cordova-ci.cloudapp.net:8080/job/cordova-periodic-build/PLATFORM=windows-10-store,PLUGIN=cordova-plugin-file/)|[![Build Status](https://travis-ci.org/apache/cordova-plugin-file.svg?branch=master)](https://travis-ci.org/apache/cordova-plugin-file)|
+|Android|
 
 # cordova-plugin-file
 
@@ -66,18 +64,7 @@ Report issues on the [Apache Cordova issue tracker](https://issues.apache.org/ji
 
 ## Supported Platforms
 
-- Amazon Fire OS
 - Android
-- BlackBerry 10
-- Firefox OS
-- iOS
-- OS X
-- Windows Phone 7 and 8*
-- Windows 8*
-- Windows*
-- Browser
-
-\* _These platforms do not support `FileReader.readAsArrayBuffer` nor `FileWriter.write(blob)`._
 
 ## Where to Store Files
 
@@ -114,51 +101,10 @@ Each URL is in the form _file:///path/to/spot/_, and can be converted to a
 
 * `cordova.file.externalRootDirectory` - External storage (SD card) root. (_Android_, _BlackBerry 10_)
 
-* `cordova.file.tempDirectory` - Temp directory that the OS can clear at will. Do not
-  rely on the OS to clear this directory; your app should always remove files as
-  applicable. (_iOS_, _OSX_, _windows_)
-
-* `cordova.file.syncedDataDirectory` - Holds app-specific files that should be synced
-  (e.g. to iCloud). (_iOS_, _windows_)
-
-* `cordova.file.documentsDirectory` - Files private to the app, but that are meaningful
-  to other application (e.g. Office files). Note that for _OSX_ this is the user's `~/Documents` directory. (_iOS_, _OSX_)
-
-* `cordova.file.sharedDirectory` - Files globally available to all applications (_BlackBerry 10_)
-
 ## File System Layouts
 
 Although technically an implementation detail, it can be very useful to know how
 the `cordova.file.*` properties map to physical paths on a real device.
-
-### iOS File System Layout
-
-| Device Path                                    | `cordova.file.*`            | `iosExtraFileSystems` | r/w? | persistent? | OS clears | sync | private |
-|:-----------------------------------------------|:----------------------------|:----------------------|:----:|:-----------:|:---------:|:----:|:-------:|
-| `/var/mobile/Applications/<UUID>/`             | applicationStorageDirectory | -                     | r    |     N/A     |     N/A   | N/A  |   Yes   |
-| &nbsp;&nbsp;&nbsp;`appname.app/`               | applicationDirectory        | bundle                | r    |     N/A     |     N/A   | N/A  |   Yes   |
-| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`www/`     | -                           | -                     | r    |     N/A     |     N/A   | N/A  |   Yes   |
-| &nbsp;&nbsp;&nbsp;`Documents/`                 | documentsDirectory          | documents             | r/w  |     Yes     |     No    | Yes  |   Yes   |
-| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`NoCloud/` | -                           | documents-nosync      | r/w  |     Yes     |     No    | No   |   Yes   |
-| &nbsp;&nbsp;&nbsp;`Library`                    | -                           | library               | r/w  |     Yes     |     No    | Yes? |   Yes   |
-| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`NoCloud/` | dataDirectory               | library-nosync        | r/w  |     Yes     |     No    | No   |   Yes   |
-| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`Cloud/`   | syncedDataDirectory         | -                     | r/w  |     Yes     |     No    | Yes  |   Yes   |
-| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`Caches/`  | cacheDirectory              | cache                 | r/w  |     Yes*    |  Yes\*\*\*| No   |   Yes   |
-| &nbsp;&nbsp;&nbsp;`tmp/`                       | tempDirectory               | -                     | r/w  |     No\*\*  |  Yes\*\*\*| No   |   Yes   |
-
-
-  \* Files persist across app restarts and upgrades, but this directory can
-     be cleared whenever the OS desires. Your app should be able to recreate any
-     content that might be deleted.
-
-\*\* Files may persist across app restarts, but do not rely on this behavior. Files
-     are not guaranteed to persist across updates. Your app should remove files from
-     this directory when it is applicable, as the OS does not guarantee when (or even
-     if) these files are removed.
-
-\*\*\* The OS may clear the contents of this directory whenever it feels it is
-     necessary, but do not rely on this. You should clear this directory as
-     appropriate for your application.
 
 ### Android File System Layout
 
@@ -184,54 +130,6 @@ the `cordova.file.*` properties map to physical paths on a real device.
 
 **Note**: If external storage can't be mounted, the `cordova.file.external*`
 properties are `null`.
-
-### BlackBerry 10 File System Layout
-
-| Device Path                                                  | `cordova.file.*`            | r/w? | persistent? | OS clears | private |
-|:-------------------------------------------------------------|:----------------------------|:----:|:-----------:|:---------:|:-------:|
-| `file:///accounts/1000/appdata/<app id>/`                    | applicationStorageDirectory | r    |     N/A     |     N/A   |   Yes   |
-| &nbsp;&nbsp;&nbsp;`app/native`                               | applicationDirectory        | r    |     N/A     |     N/A   |   Yes   |
-| &nbsp;&nbsp;&nbsp;`data/webviews/webfs/temporary/local__0`   | cacheDirectory              | r/w  |     No      |     Yes   |   Yes   |
-| &nbsp;&nbsp;&nbsp;`data/webviews/webfs/persistent/local__0`  | dataDirectory               | r/w  |     Yes     |     No    |   Yes   |
-| `file:///accounts/1000/removable/sdcard`                     | externalRemovableDirectory  | r/w  |     Yes     |     No    |   No    |
-| `file:///accounts/1000/shared`                               | sharedDirectory             | r/w  |     Yes     |     No    |   No    |
-
-*Note*: When application is deployed to work perimeter, all paths are relative to /accounts/1000-enterprise.
-
-### OS X File System Layout
-
-| Device Path                                      | `cordova.file.*`            | `iosExtraFileSystems` | r/w? |  OS clears | private |
-|:-------------------------------------------------|:----------------------------|:----------------------|:----:|:---------:|:-------:|
-| `/Applications/<appname>.app/`                   | -                           | bundle                | r    |     N/A   |   Yes   |
-| &nbsp;&nbsp;&nbsp;&nbsp;`Content/Resources/`     | applicationDirectory        | -                     | r    |     N/A   |   Yes   |
-| `~/Library/Application Support/<bundle-id>/`     | applicationStorageDirectory | -                     | r/w  |     No    |   Yes   |
-| &nbsp;&nbsp;&nbsp;&nbsp;`files/`                 | dataDirectory               | -                     | r/w  |     No    |   Yes   |
-| `~/Documents/`                                   | documentsDirectory          | documents             | r/w  |     No    |    No   |
-| `~/Library/Caches/<bundle-id>/`                  | cacheDirectory              | cache                 | r/w  |     No    |   Yes   |
-| `/tmp/`                                          | tempDirectory               | -                     | r/w  |    Yes\*  |   Yes   |
-| `/`                                              | rootDirectory               | root                  | r/w  |    No\*\* |    No   |
-
-**Note**: This is the layout for non sandboxed applications. I you enable sandboxing, the `applicationStorageDirectory` will be below ` ~/Library/Containers/<bundle-id>/Data/Library/Application Support`.
-
-\* Files persist across app restarts and upgrades, but this directory can
-     be cleared whenever the OS desires. Your app should be able to recreate any
-     content that might be deleted. You should clear this directory as
-     appropriate for your application.
-
-\*\* Allows access to the entire file system. This is only available for non sandboxed apps.
-
-### Windows File System Layout
-
-| Device Path                                           | `cordova.file.*`            | r/w? | persistent? | OS clears | private |
-|:------------------------------------------------------|:----------------------------|:----:|:-----------:|:---------:|:-------:|
-| `ms-appdata:///`                                      | applicationDirectory        | r    |     N/A     |     N/A   |   Yes   |
-| &nbsp;&nbsp;&nbsp;`local/`                            | dataDirectory               | r/w  |     Yes     |     No    |   Yes   |
-| &nbsp;&nbsp;&nbsp;`temp/`                             | cacheDirectory              | r/w  |     No      |     Yes\* |   Yes   |
-| &nbsp;&nbsp;&nbsp;`temp/`                             | tempDirectory               | r/w  |     No      |     Yes\* |   Yes   |
-| &nbsp;&nbsp;&nbsp;`roaming/`                          | syncedDataDirectory         | r/w  |     Yes     |     No    |   Yes   |
-
-\* The OS may periodically clear this directory
-
 
 ## Android Quirks
 
@@ -288,134 +186,6 @@ Marshmallow requires the apps to ask for permissions when reading/writing to ext
 `cordova.file.applicationStorageDirectory` and `cordova.file.externalApplicationStorageDirectory`, and the plugin doesn't request permission
 for these two directories unless external storage is not mounted. However due to a limitation, when external storage is not mounted, it would ask for
 permission to write to `cordova.file.externalApplicationStorageDirectory`.
-
-## iOS Quirks
-
-- `cordova.file.applicationStorageDirectory` is read-only; attempting to store
-  files within the root directory will fail. Use one of the other `cordova.file.*`
-  properties defined for iOS (only `applicationDirectory` and `applicationStorageDirectory` are
-  read-only).
-- `FileReader.readAsText(blob, encoding)`
-  - The `encoding` parameter is not supported, and UTF-8 encoding is always in effect.
-
-### iOS Persistent storage location
-
-There are two valid locations to store persistent files on an iOS device: the
-Documents directory and the Library directory. Previous versions of the plugin
-only ever stored persistent files in the Documents directory. This had the
-side-effect of making all of an application's files visible in iTunes, which
-was often unintended, especially for applications which handle lots of small
-files, rather than producing complete documents for export, which is the
-intended purpose of the directory.
-
-It is now possible to choose whether to store files in the documents or library
-directory, with a preference in your application's `config.xml` file. To do this,
-add one of these two lines to `config.xml`:
-
-    <preference name="iosPersistentFileLocation" value="Library" />
-
-    <preference name="iosPersistentFileLocation" value="Compatibility" />
-
-Without this line, the File plugin will use `Compatibility` as the default. If
-a preference tag is present, and is not one of these values, the application
-will not start.
-
-If your application has previously been shipped to users, using an older (pre-
-1.0) version of this plugin, and has stored files in the persistent filesystem,
-then you should set the preference to `Compatibility`. Switching the location to
-`Library` would mean that existing users who upgrade their application would be
-unable to access their previously-stored files.
-
-If your application is new, or has never previously stored files in the
-persistent filesystem, then the `Library` setting is generally recommended.
-
-## Firefox OS Quirks
-
-The File System API is not natively supported by Firefox OS and is implemented
-as a shim on top of indexedDB.
-
-* Does not fail when removing non-empty directories
-* Does not support metadata for directories
-* Methods `copyTo` and `moveTo` do not support directories
-
-The following data paths are supported:
-* `applicationDirectory` - Uses `xhr` to get local files that are packaged with the app.
-* `dataDirectory` - For persistent app-specific data files.
-* `cacheDirectory` - Cached files that should survive app restarts (Apps should not rely
-on the OS to delete files in here).
-
-## Browser Quirks
-
-### Common quirks and remarks
-- Each browser uses its own sandboxed filesystem. IE and Firefox use IndexedDB as a base.
-All browsers use forward slash as directory separator in a path.
-- Directory entries have to be created successively.
-For example, the call `fs.root.getDirectory('dir1/dir2', {create:true}, successCallback, errorCallback)`
-will fail if dir1 did not exist.
-- The plugin requests user permission to use persistent storage at the application first start.
-- Plugin supports `cdvfile://localhost` (local resources) only. I.e. external resources are not supported via `cdvfile`.
-- The plugin does not follow ["File System API 8.3 Naming restrictions"](http://www.w3.org/TR/2011/WD-file-system-api-20110419/#naming-restrictions).
-- Blob and File' `close` function is not supported.
-- `FileSaver` and `BlobBuilder` are not supported by this plugin and don't have stubs.
-- The plugin does not support `requestAllFileSystems`. This function is also missing in the specifications.
-- Entries in directory will not be removed if you use `create: true` flag for existing directory.
-- Files created via constructor are not supported. You should use entry.file method instead.
-- Each browser uses its own form for blob URL references.
-- `readAsDataURL` function is supported, but the mediatype in Chrome depends on entry name extension,
-mediatype in IE is always empty (which is the same as `text-plain` according the specification),
-the mediatype in Firefox is always `application/octet-stream`.
-For example, if the content is `abcdefg` then Firefox returns `data:application/octet-stream;base64,YWJjZGVmZw==`,
-IE returns `data:;base64,YWJjZGVmZw==`, Chrome returns `data:<mediatype depending on extension of entry name>;base64,YWJjZGVmZw==`.
-- `toInternalURL` returns the path in the form `file:///persistent/path/to/entry` (Firefox, IE).
-Chrome returns the path in the form `cdvfile://localhost/persistent/file`.
-
-### Chrome quirks
-- Chrome filesystem is not immediately ready after device ready event. As a workaround you can subscribe to `filePluginIsReady` event.
-Example:
-```javascript
-window.addEventListener('filePluginIsReady', function(){ console.log('File plugin is ready');}, false);
-```
-You can use `window.isFilePluginReadyRaised` function to check whether event was already raised.
-- window.requestFileSystem TEMPORARY and PERSISTENT filesystem quotas are not limited in Chrome.
-- To increase persistent storage in Chrome you need to call `window.initPersistentFileSystem` method. Persistent storage quota is 5 MB by default.
-- Chrome requires `--allow-file-access-from-files` run argument to support API via `file:///` protocol.
-- `File` object will be not changed if you use flag `{create:true}` when getting an existing `Entry`.
-- events `cancelable` property is set to true in Chrome. This is contrary to the [specification](http://dev.w3.org/2009/dap/file-system/file-writer.html).
-- `toURL` function in Chrome returns `filesystem:`-prefixed path depending on application host.
-For example, `filesystem:file:///persistent/somefile.txt`, `filesystem:http://localhost:8080/persistent/somefile.txt`.
-- `toURL` function result does not contain trailing slash in case of directory entry.
-Chrome resolves directories with slash-trailed urls correctly though.
-- `resolveLocalFileSystemURL` method requires the inbound `url` to have `filesystem` prefix. For example, `url` parameter for `resolveLocalFileSystemURL`
-should be in the form `filesystem:file:///persistent/somefile.txt` as opposed to the form `file:///persistent/somefile.txt` in Android.
-- Deprecated `toNativeURL` function is not supported and does not have a stub.
-- `setMetadata` function is not stated in the specifications and not supported.
-- INVALID_MODIFICATION_ERR (code: 9) is thrown instead of SYNTAX_ERR(code: 8) on requesting of a non-existant filesystem.
-- INVALID_MODIFICATION_ERR (code: 9) is thrown instead of PATH_EXISTS_ERR(code: 12) on trying to exclusively create a file or directory, which already exists.
-- INVALID_MODIFICATION_ERR (code: 9) is thrown instead of  NO_MODIFICATION_ALLOWED_ERR(code: 6) on trying to call removeRecursively on the root file system.
-- INVALID_MODIFICATION_ERR (code: 9) is thrown instead of NOT_FOUND_ERR(code: 1) on trying to moveTo directory that does not exist.
-
-### IndexedDB-based impl quirks (Firefox and IE)
-- `.` and `..` are not supported.
-- IE does not support `file:///`-mode; only hosted mode is supported (http://localhost:xxxx).
-- Firefox filesystem size is not limited but each 50MB extension will request a user permission.
-IE10 allows up to 10mb of combined AppCache and IndexedDB used in implementation of filesystem without prompting,
-once you hit that level you will be asked if you want to allow it to be increased up to a max of 250mb per site.
-So `size` parameter for `requestFileSystem` function does not affect filesystem in Firefox and IE.
-- `readAsBinaryString` function is not stated in the Specs and not supported in IE and does not have a stub.
-- `file.type` is always null.
-- You should not create entry using DirectoryEntry instance callback result which was deleted.
-Otherwise, you will get a 'hanging entry'.
-- Before you can read a file, which was just written you need to get a new instance of this file.
-- `setMetadata` function, which is not stated in the Specs supports `modificationTime` field change only.
-- `copyTo` and `moveTo` functions do not support directories.
-- Directories metadata is not supported.
-- Both Entry.remove and directoryEntry.removeRecursively don't fail when removing
-non-empty directories - directories being removed are cleaned along with contents instead.
-- `abort` and `truncate` functions are not supported.
-- progress events are not fired. For example, this handler will be not executed:
-```javascript
-writer.onprogress = function() { /*commands*/ };
-```
 
 ## Upgrading Notes
 
@@ -544,16 +314,6 @@ filesystems to be installed. By default, all file-system roots are enabled.
 * `root`: The entire device filesystem
 
 Android also supports a special filesystem named "documents", which represents a "/Documents/" subdirectory within the "files" filesystem.
-
-### iOS
-
-* `library`: The application's Library directory
-* `documents`: The application's Documents directory
-* `cache`: The application's Cache directory
-* `bundle`: The application's bundle; the location of the app itself on disk (read-only)
-* `root`: The entire device filesystem
-
-By default, the library and documents directories can be synced to iCloud. You can also request two additional filesystems, `library-nosync` and `documents-nosync`, which represent a special non-synced directory within the `/Library` or `/Documents` filesystem.
 
 ## Sample: Create Files and Directories, Write, Read, and Append files <a name="sample"></a>
 
